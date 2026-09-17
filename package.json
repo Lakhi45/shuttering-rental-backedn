@@ -1,5 +1,5 @@
 {
-  "name": "shuttering-rental-auth-backend",
+  "name": "shuttering-rental-backend",
   "version": "1.0.0",
   "description": "Authentication service (signup, login, refresh, logout) for the Shuttering Rental App",
   "main": "src/server.js",
