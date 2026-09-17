@@ -11,7 +11,7 @@ const ApiError = require('./utils/apiError');
 
 const app = express();
 
-// --- Security & parsing middleware ---
+// Security
 app.use(helmet());
 
 app.use(
@@ -21,21 +21,18 @@ app.use(
   })
 );
 
+// Parsing
 app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 app.use(cookieParser());
+app.use(mongoSanitize());
 
-app.use(mongoSanitize()); // strips $ and . from req.body/query/params
-
-// --- Logger ---
+// Logger
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 
-// =====================================================
-// Root route
-// =====================================================
-
+// Root
 app.get('/', (req, res) => {
   res.status(200).json({
     success: true,
@@ -43,35 +40,25 @@ app.get('/', (req, res) => {
   });
 });
 
-// =====================================================
-// API documentation / available routes
-// =====================================================
-
+// API information
 app.get('/api/', (req, res) => {
   res.status(200).json({
     success: true,
     message: 'Shuttering Rental API',
     version: '1.0.0',
-
     routes: {
       health: {
         method: 'GET',
         path: '/api/health',
-        description: 'Check API health',
       },
-
       auth: {
         basePath: '/api/auth',
-        description: 'Authentication routes',
       },
     },
   });
 });
 
-// =====================================================
-// Health check
-// =====================================================
-
+// Health
 app.get('/api/health', (req, res) => {
   res.status(200).json({
     success: true,
@@ -79,26 +66,15 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// =====================================================
-// Authentication routes
-// =====================================================
-
+// Auth
 app.use('/api/auth', authRoutes);
 
-// =====================================================
-// 404 handler
-// IMPORTANT: Keep this AFTER all routes
-// =====================================================
-
+// 404
 app.use((req, res, next) => {
   next(new ApiError(404, `Route not found: ${req.originalUrl}`));
 });
 
-// =====================================================
-// Central error handler
-// IMPORTANT: Must be the last middleware
-// =====================================================
-
+// Error handler
 app.use(errorHandler);
 
 module.exports = app;
