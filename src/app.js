@@ -28,6 +28,13 @@ if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 
+app.get('/', (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: 'Shuttering Rental API is running',
+  });
+});
+
 // --- Health check ---
 app.get('/api/health', (req, res) => {
   res.status(200).json({ success: true, message: 'API is healthy' });
